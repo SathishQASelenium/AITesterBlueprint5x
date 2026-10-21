@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Test Plan &mdash; VWO Login Dashboard</title>
+<style>
+  :root {
+    --brand: #0E7EF3;
+    --brand-dark: #0A5FBF;
+    --brand-soft: #EAF3FE;
+    --ink: #1F2933;
+    --ink-soft: #52606D;
+    --line: #D9E2EC;
+    --line-soft: #EDF2F7;
+    --bg: #FFFFFF;
+    --bg-alt: #F7FAFC;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    padding: 0 0 40px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- Cover / header ---------- */
+  header.cover {
+    border-top: 6px solid var(--brand);
+    background: linear-gradient(180deg, var(--brand-soft) 0%, #FFFFFF 100%);
+    padding: 34px 0 26px;
+    margin-bottom: 10px;
+  }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: .5px;
+  }
+  .brand-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--brand-dark);
+    letter-spacing: .3px;
+  }
+  .brand-name small {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+  h1.doc-title {
+    font-size: 30px;
+    line-height: 1.2;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .doc-sub {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+  }
+
+  /* ---------- Meta table ---------- */
+  table.meta {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  table.meta th,
+  table.meta td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 13px;
+    vertical-align: top;
+  }
+  table.meta th {
+    width: 190px;
+    background: var(--bg-alt);
+    color: var(--ink-soft);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  table.meta tr:last-child th,
+  table.meta tr:last-child td { border-bottom: none; }
+
+  /* ---------- TOC ---------- */
+  nav.toc {
+    background: var(--bg-alt);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--brand);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 26px 0 30px;
+  }
+  nav.toc h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--brand-dark);
+    border: none;
+    padding: 0;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 34px;
+  }
+  nav.toc li { margin: 3px 0; break-inside: avoid; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--brand); text-decoration: underline; }
+
+  /* ---------- Sections ---------- */
+  section { margin: 0 0 26px; }
+
+  h2.sec {
+    font-size: 19px;
+    color: var(--brand-dark);
+    margin: 32px 0 12px;
+    padding: 0 0 8px;
+    border-bottom: 2px solid var(--brand-soft);
+    scroll-margin-top: 16px;
+  }
+  h3.sub {
+    font-size: 15px;
+    color: var(--ink);
+    margin: 18px 0 8px;
+  }
+  h4.subsub {
+    font-size: 13.5px;
+    color: var(--brand-dark);
+    margin: 14px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+
+  ul.tight li { margin: 2px 0; }
+
+  .note {
+    background: var(--brand-soft);
+    border-left: 4px solid var(--brand);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    margin: 12px 0;
+  }
+
+  /* ---------- Data tables ---------- */
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--brand);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+    font-weight: 600;
+    border: 1px solid var(--brand-dark);
+  }
+  table.data td {
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.data tbody tr:nth-child(even) { background: var(--bg-alt); }
+
+  .stack-badge {
+    display: inline-block;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    border: 1px solid #C9E0FB;
+    border-radius: 20px;
+    padding: 2px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 3px 6px 3px 0;
+  }
+
+  footer.doc-footer {
+    margin-top: 34px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* ---------- Print ---------- */
+  @page { size: A4; margin: 16mm 15mm; }
+
+  @media print {
+    body { font-size: 11.5px; color: #000; }
+    .wrap { max-width: none; padding: 0; }
+    header.cover { padding: 0 0 14px; }
+    nav.toc { background: #fff; }
+    nav.toc ol { columns: 2; }
+    h2.sec { break-after: avoid; page-break-after: avoid; }
+    h3.sub, h4.subsub { break-after: avoid; page-break-after: avoid; }
+    table, tr, .note { break-inside: avoid; page-break-inside: avoid; }
+    section { break-inside: auto; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="cover">
+    <div class="brand-row">
+      <div class="brand-mark">VWO</div>
+      <div class="brand-name">
+        Visual Website Optimizer
+        <small>Test Plan Document</small>
+      </div>
+    </div>
+    <h1 class="doc-title">Test Plan &mdash; VWO Login Dashboard</h1>
+    <p class="doc-sub">Prepared against the Product Requirements Document for app.vwo.com/login</p>
+
+    <table class="meta">
+      <tbody>
+        <tr><th>Document</th><td>Test Plan</td></tr>
+        <tr><th>Product / Feature</th><td>VWO Login Dashboard</td></tr>
+        <tr><th>Application URL</th><td>app.vwo.com/login</td></tr>
+        <tr><th>Prepared By</th><td>QA Team</td></tr>
+        <tr><th>Version</th><td>1.0</td></tr>
+        <tr><th>Date</th><td>21 October 2026</td></tr>
+        <tr><th>Status</th><td>Draft &mdash; For Approval</td></tr>
+      </tbody>
+    </table>
+  </header>
+
+  <nav class="toc" aria-label="Table of contents">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#objective">Objective</a></li>
+      <li><a href="#scope">Scope</a></li>
+      <li><a href="#inclusions">Inclusions</a></li>
+      <li><a href="#environments">Test Environments</a></li>
+      <li><a href="#defects">Defect Reporting Procedure</a></li>
+      <li><a href="#strategy">Test Strategy</a></li>
+      <li><a href="#schedule">Test Schedule</a></li>
+      <li><a href="#deliverables">Test Deliverables</a></li>
+      <li><a href="#criteria">Entry and Exit Criteria</a></li>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#risks">Risks and Mitigations</a></li>
+      <li><a href="#approvals">Approvals</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1. Objective -->
+  <section id="objective">
+    <h2 class="sec">1. Objective</h2>
+    <p>The goal of this test plan is to ensure the quality, functionality, and reliability of the
+       VWO Login Dashboard hosted at app.vwo.com/login.</p>
+    <p>The login dashboard is designed to handle secure user authentication for VWO&rsquo;s digital
+       experience optimization platform.</p>
+    <ul class="tight">
+      <li>Track both leading and lagging indicators for your experiment&rsquo;s impact</li>
+      <li>Keep an eye on guardrail metrics to stop bad experiments early on</li>
+    </ul>
+    <p>
+      <span class="stack-badge">Sprint boot</span>
+      <span class="stack-badge">My SQL</span>
+      <span class="stack-badge">Documentation via Flagger</span>
+    </p>
+  </section>
+
+  <!-- 2. Scope -->
+  <section id="scope">
+    <h2 class="sec">2. Scope</h2>
+    <p><strong>Scope of Test Plan for VWO Login Dashboard:</strong></p>
+
+    <h3 class="sub">1. Functional Testing</h3>
+    <ul class="tight">
+      <li>Verify the correctness and functionality of all login and authentication flows as per the requirements documentation.</li>
+      <li>Test various scenarios for user login, session handling, and logout.</li>
+      <li>Validate user authentication and authorization mechanisms for protected areas of the platform.</li>
+    </ul>
+
+    <h3 class="sub">2. Data Validation Testing</h3>
+    <ul class="tight">
+      <li>Ensure that the login form correctly validates input data, rejecting invalid requests.</li>
+      <li>Test boundary values for input fields (email address, password) to check for any unexpected behavior.</li>
+      <li>Validate the accuracy of the validation messages returned to the user.</li>
+    </ul>
+
+    <h3 class="sub">3. Error Handling Testing</h3>
+    <ul class="tight">
+      <li>Verify that appropriate error messages are returned for invalid login requests.</li>
+      <li>Check error responses for sensitive information disclosure.</li>
+      <li>Validate the login page&rsquo;s ability to handle unexpected errors gracefully.</li>
+    </ul>
+
+    <h3 class="sub">4. Performance Testing</h3>
+    <ul class="tight">
+      <li>Assess the login page&rsquo;s response time under normal and peak loads to identify potential bottlenecks.</li>
+      <li>Measure the login throughput and scalability to handle concurrent requests.</li>
+    </ul>
+
+    <h3 class="sub">5. Security Testing</h3>
+    <ul class="tight">
+      <li>Conduct security assessments to identify vulnerabilities such as SQL injection, XSS, etc.</li>
+      <li>Validate the login page&rsquo;s compliance with secure data transmission practices (e.g., HTTPS).</li>
+      <li>Check for proper access controls to prevent unauthorized access to sensitive resources.</li>
+    </ul>
+
+    <h3 class="sub">6. Integration Testing</h3>
+    <ul class="tight">
+      <li>Verify interactions between the login dashboard and the downstream VWO services.</li>
+      <li>Test data consistency across related modules.</li>
+    </ul>
+
+    <h3 class="sub">7. Compatibility Testing</h3>
+    <ul class="tight">
+      <li>Test the login dashboard on different platforms, browsers, and devices to ensure cross-compatibility.</li>
+    </ul>
+
+    <h3 class="sub">8. Documentation Review</h3>
+    <ul class="tight">
+      <li>Assess the clarity, completeness, and accuracy of the login dashboard documentation.</li>
+      <li>Verify that the documentation is in sync with the actual behavior.</li>
+    </ul>
+
+    <h3 class="sub">9. Load Testing</h3>
+    <ul class="tight">
+      <li>Evaluate the login dashboard&rsquo;s behavior under high concurrent user loads to ensure stability.</li>
+    </ul>
+
+    <h3 class="sub">10. Regression Testing</h3>
+    <ul class="tight">
+      <li>Conduct regression testing after bug fixes or updates to ensure existing functionality remains intact.</li>
+    </ul>
+
+    <h3 class="sub">11. Edge Case Testing</h3>
+    <ul class="tight">
+      <li>Test extreme and boundary scenarios to identify potential issues.</li>
+    </ul>
+
+    <h3 class="sub">12. Concurrency Testing</h3>
+    <ul class="tight">
+      <li>Assess the login dashboard&rsquo;s behavior when multiple users attempt to log in simultaneously.</li>
+    </ul>
+
+    <h3 class="sub">13. Ad Hoc Testing</h3>
+    <ul class="tight">
+      <li>Perform exploratory testing to identify any hidden defects or usability issues.</li>
+    </ul>
+
+    <h3 class="sub">14. Usability Testing</h3>
+    <ul class="tight">
+      <li>Evaluate the login dashboard&rsquo;s user-friendliness and ease of use.</li>
+    </ul>
+
+    <h3 class="sub">15. Continuous Integration and Deployment (CI/CD) Testing</h3>
+    <ul class="tight">
+      <li>Validate the login dashboard&rsquo;s behavior within the CI/CD pipeline to ensure smooth deployments.</li>
+    </ul>
+
+    <h3 class="sub">16. Performance Monitoring</h3>
+    <ul class="tight">
+      <li>Implement monitoring to track login performance in real-time.</li>
+    </ul>
+
+    <h3 class="sub">17. Backup and Recovery Testing</h3>
+    <ul class="tight">
+      <li>Validate data backup and recovery procedures to ensure data integrity.</li>
+    </ul>
+
+    <h3 class="sub">18. Internationalization Testing</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s behavior with different language settings.</li>
+    </ul>
+
+    <h3 class="sub">19. Rate Limiting Testing</h3>
+    <ul class="tight">
+      <li>Check the login dashboard&rsquo;s adherence to rate-limiting rules to prevent abuse.</li>
+    </ul>
+
+    <h3 class="sub">20. Third-Party Integration Testing</h3>
+    <ul class="tight">
+      <li>Validate any third-party integrations (enterprise SSO, social login) for smooth functioning.</li>
+    </ul>
+
+    <div class="note">
+      It&rsquo;s important to note that the scope of the test plan may evolve during the testing process
+      based on feedback, changing requirements, or discoveries during testing. The scope should be
+      reviewed and adjusted accordingly throughout the testing phase to ensure comprehensive coverage
+      of the VWO Login Dashboard.
+    </div>
+  </section>
+
+  <!-- 3. Inclusions -->
+  <section id="inclusions">
+    <h2 class="sec">3. Inclusions</h2>
+
+    <h3 class="sub">Create (POST) Operations:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s ability to create new user sessions using valid input data.</li>
+      <li>Verify that appropriate error responses are returned for invalid or missing data.</li>
+      <li>Validate that newly created sessions are stored correctly in the system.</li>
+    </ul>
+
+    <h3 class="sub">Read (GET) Operations:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s ability to retrieve user and session information by various criteria.</li>
+      <li>Verify that the dashboard returns the correct data in response to read requests.</li>
+      <li>Test for correct handling of non-existent or invalid session IDs.</li>
+    </ul>
+
+    <h3 class="sub">Update (PUT) Operations:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s ability to update existing user account and session data with valid input.</li>
+      <li>Verify that the dashboard rejects invalid update requests with appropriate error responses.</li>
+      <li>Validate that the account data is correctly modified in the system after updates.</li>
+    </ul>
+
+    <h3 class="sub">Delete (DELETE) Operations:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s ability to terminate sessions (logout) by providing valid session IDs.</li>
+      <li>Verify that the dashboard returns appropriate responses after a successful logout.</li>
+      <li>Validate that the terminated sessions are removed from the system.</li>
+    </ul>
+
+    <h3 class="sub">Boundary Testing:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard with minimum and maximum allowed values for input fields.</li>
+      <li>Validate the behavior of the dashboard with values close to the boundaries.</li>
+    </ul>
+
+    <h3 class="sub">Concurrency Testing:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s behavior when multiple users try to log in simultaneously.</li>
+      <li>Verify data consistency and handling of concurrent session modifications.</li>
+    </ul>
+
+    <h3 class="sub">Data Validation:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s response to various data validation scenarios (e.g., invalid characters, data types, mandatory fields).</li>
+      <li>Verify that the dashboard handles validation errors appropriately.</li>
+    </ul>
+
+    <h3 class="sub">Authentication and Authorization:</h3>
+    <ul class="tight">
+      <li>Test login flows for both authenticated and unauthenticated users.</li>
+      <li>Verify that only authorized users can access protected areas of the platform.</li>
+    </ul>
+
+    <h3 class="sub">Error Handling:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard&rsquo;s response when invalid or malformed requests are made.</li>
+      <li>Validate that appropriate error codes and messages are returned.</li>
+    </ul>
+
+    <h3 class="sub">Security Testing:</h3>
+    <ul class="tight">
+      <li>Test for security vulnerabilities during login operations (e.g., SQL injection, XSS).</li>
+      <li>Verify that sensitive data is not exposed in responses.</li>
+    </ul>
+
+    <h3 class="sub">Performance Testing:</h3>
+    <ul class="tight">
+      <li>Evaluate the login dashboard&rsquo;s response time under normal and peak loads.</li>
+      <li>Measure the throughput and scalability of the login dashboard.</li>
+    </ul>
+
+    <h3 class="sub">Integration Testing:</h3>
+    <ul class="tight">
+      <li>Verify the interaction and data consistency between login operations and other platform components.</li>
+    </ul>
+
+    <h3 class="sub">Regression Testing:</h3>
+    <ul class="tight">
+      <li>Perform regression tests after bug fixes or updates to ensure existing login functionalities remain intact.</li>
+    </ul>
+
+    <h3 class="sub">Documentation Review:</h3>
+    <ul class="tight">
+      <li>Assess the accuracy of the documentation related to login operations.</li>
+    </ul>
+
+    <h3 class="sub">Load Testing:</h3>
+    <ul class="tight">
+      <li>Evaluate the login dashboard&rsquo;s behavior and performance under high concurrent user loads.</li>
+    </ul>
+
+    <h3 class="sub">Compatibility Testing:</h3>
+    <ul class="tight">
+      <li>Test the login dashboard on different platforms, browsers, and devices.</li>
+    </ul>
+
+    <h3 class="sub">Usability Testing:</h3>
+    <ul class="tight">
+      <li>Evaluate the ease of using the login dashboard from a user&rsquo;s perspective.</li>
+    </ul>
+
+    <h3 class="sub">Continuous Integration and Deployment (CI/CD) Testing:</h3>
+    <ul class="tight">
+      <li>Validate the login operations within the CI/CD pipeline to ensure smooth deployments.</li>
+    </ul>
+
+    <h3 class="sub">Rate Limiting Testing:</h3>
+    <ul class="tight">
+      <li>Check the login dashboard&rsquo;s adherence to rate-limiting rules to prevent abuse.</li>
+    </ul>
+
+    <h3 class="sub">Backup and Recovery Testing:</h3>
+    <ul class="tight">
+      <li>Validate data backup and recovery procedures for login-related data.</li>
+    </ul>
+  </section>
+
+  <!-- 4. Test Environments -->
+  <section id="environments">
+    <h2 class="sec">4. Test Environments</h2>
+    <ul>
+      <li>The operating systems and versions that will be used for testing, such as Windows 10, macOS, or Linux.</li>
+      <li>The browsers and versions that will be tested, such as Google Chrome, Mozilla Firefox, or Microsoft Edge.</li>
+      <li>The device types and screen sizes that will be used for testing, such as desktop computers, laptops, tablets, and smartphones.</li>
+      <li>The network connectivity and bandwidth that will be available for testing, such as Wi-Fi, cellular, or wired connections.</li>
+      <li>The hardware and software requirements for running the test cases, such as a specific processor, memory, or storage capacity.</li>
+      <li>The security protocols and authentication methods that will be used to access the test environment, such as passwords, tokens, or certificates.</li>
+      <li>The access permissions and roles of the team members who will be using the test environment, such as testers, developers, or stakeholders.</li>
+    </ul>
+
+    <table class="data">
+      <thead>
+        <tr><th style="width:40%">Name</th><th>Env URL</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>QA</td><td>app.vwo.com/login</td></tr>
+        <tr><td>Pre Prod</td><td>app.vwo.com/login</td></tr>
+      </tbody>
+    </table>
+
+    <ul class="tight">
+      <li>Windows 10 &ndash; Chrome, Firefox and Edge</li>
+      <li>Mac OS &ndash; Safari Browser</li>
+      <li>Android Mobile OS &ndash; Chrome</li>
+      <li>iPhone Mobile OS &ndash; Safari</li>
+    </ul>
+  </section>
+
+  <!-- 5. Defect Reporting Procedure -->
+  <section id="defects">
+    <h2 class="sec">5. Defect Reporting Procedure</h2>
+    <ul>
+      <li>The criteria for identifying a defect, such as deviation from the requirements, user experience issues, or technical errors.</li>
+      <li>The steps for reporting a defect, such as using a designated template, providing detailed reproduction steps, and attaching screenshots or logs.</li>
+      <li>The process for triaging and prioritizing defects, such as assigning severity and priority levels, and assigning them to the appropriate team members for investigation and resolution.</li>
+      <li>The tools and systems that will be used for tracking and managing defects, such as a defect tracking software or a project management tool.</li>
+      <li>The roles and responsibilities of the team members involved in the defect reporting process, such as testers, developers, and the test lead.</li>
+      <li>The communication channels and frequencies for updating stakeholders on the progress and status of defects.</li>
+      <li>The metrics that will be used to measure the effectiveness of the defect reporting process, such as the number of defects found, the time taken to resolve them, and the percentage of defects that were successfully fixed.</li>
+    </ul>
+
+    <h3 class="sub">Defect Process</h3>
+    <table class="data">
+      <thead>
+        <tr><th style="width:40%">POC</th><th>Owner</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>New Frontend</td><td>Devesh</td></tr>
+        <tr><td>Backend</td><td>Sonal</td></tr>
+        <tr><td>Dev Ops</td><td>Prajeeth</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Tools</strong> &ndash; JIRA</p>
+  </section>
+
+  <!-- 6. Test Strategy -->
+  <section id="strategy">
+    <h2 class="sec">6. Test Strategy</h2>
+
+    <p>The first step is to create test scenarios and test cases for the various features in Scope.</p>
+
+    <p>While developing test cases, we&rsquo;ll use a number of test design techniques.</p>
+    <ul class="tight">
+      <li>Equivalence Class Partition</li>
+      <li>Boundary Value Analysis</li>
+      <li>Decision Table Testing</li>
+      <li>State Transition Testing</li>
+      <li>Use Case Testing</li>
+    </ul>
+
+    <p>We also use our expertise in creating Test Cases by applying the below:</p>
+    <ul class="tight">
+      <li>Error Guessing</li>
+      <li>Exploratory Testing</li>
+    </ul>
+    <ul class="tight">
+      <li>We prioritize the Test Cases</li>
+    </ul>
+
+    <h3 class="sub">Step 2: Our testing procedure when we receive a request for testing:</h3>
+    <ul>
+      <li>First, we&rsquo;ll conduct smoke testing to see if the various and important functionalities of the application are working.</li>
+      <li>We reject the build, if the Smoke Testing fails and will wait for the stable build before performing in depth testing of the application functionalities.</li>
+      <li>Once we receive a stable build, which passes Smoke Testing, we perform in depth testing using the Test Cases created.</li>
+      <li>Multiple Test Resources will be testing the same Application on Multiple Supported Environments simultaneously.</li>
+    </ul>
+
+    <p>We then report the bugs in bug tracking tool and send dev. management the defect found on that day in a status end of the day email.</p>
+
+    <p>As part of the Testing, we will perform the below types of Testing:</p>
+    <ul class="tight">
+      <li>Smoke Testing and Sanity Testing</li>
+      <li>Regression Testing and Retesting</li>
+      <li>Usability Testing, Functionality &amp; UI Testing</li>
+    </ul>
+    <ul class="tight">
+      <li>We repeat Test Cycles until we get the quality product.</li>
+    </ul>
+
+    <h3 class="sub">Step 3 &ndash; We will follow the below best practices to make our Testing better:</h3>
+    <ul>
+      <li><strong>Context Driven Testing</strong> &ndash; We will be performing Testing as per the context of the given application.</li>
+      <li><strong>Shift Left Testing</strong> &ndash; We will start testing from the beginning stages of the development itself, instead of waiting for the stable build.</li>
+      <li><strong>Exploratory Testing</strong> &ndash; Using our expertise we will perform Exploratory Testing, apart from the normal execution of the Test cases.</li>
+      <li><strong>End to End Flow Testing</strong> &ndash; We will test the end-to-end scenario which involves multiple functionalities to simulate the end user flows.</li>
+    </ul>
+  </section>
+
+  <!-- 7. Test Schedule -->
+  <section id="schedule">
+    <h2 class="sec">7. Test Schedule</h2>
+    <p>Following is the test schedule planned for the project &ndash;</p>
+    <table class="data">
+      <thead>
+        <tr><th style="width:55%">Task</th><th>Dates</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Creating Test Plan</td><td>&nbsp;</td></tr>
+        <tr><td>Test Case Creation</td><td>&nbsp;</td></tr>
+        <tr><td>Test Case Execution</td><td>&nbsp;</td></tr>
+        <tr><td>Summary Reports Submission Date</td><td>&nbsp;</td></tr>
+      </tbody>
+    </table>
+    <p><strong>2 Sprints</strong> to Test the Application</p>
+  </section>
+
+  <!-- 8. Test Deliverables -->
+  <section id="deliverables">
+    <h2 class="sec">8. Test Deliverables</h2>
+    <ul class="tight">
+      <li>Test Plan</li>
+      <li>Test Scenarios</li>
+      <li>Test Cases</li>
+      <li>Defect Reports</li>
+      <li>Test Summary Reports</li>
+    </ul>
+  </section>
+
+  <!-- 9. Entry and Exit Criteria -->
+  <section id="criteria">
+    <h2 class="sec">9. Entry and Exit Criteria</h2>
+    <p>The below are the entry and exit criteria for every phase of the Software Testing Life Cycle:</p>
+
+    <h3 class="sub">Requirement Analysis</h3>
+    <h4 class="subsub">Entry Criteria:</h4>
+    <ul class="tight">
+      <li>Once the testing team receives the Requirements Documents or details about the Project.</li>
+    </ul>
+    <h4 class="subsub">Exit Criteria:</h4>
+    <ul class="tight">
+      <li>List of Requirements are explored and understood by the Testing team.</li>
+      <li>Doubts are cleared.</li>
+    </ul>
+
+    <h3 class="sub">Test Execution</h3>
+    <h4 class="subsub">Entry Criteria:</h4>
+    <ul class="tight">
+      <li>Test Scenarios and Test Cases Documents are signed-off by the Client.</li>
+      <li>Application is ready for Testing.</li>
+    </ul>
+    <h4 class="subsub">Exit Criteria:</h4>
+    <ul class="tight">
+      <li>Test Case Reports, Defect Reports are ready.</li>
+    </ul>
+
+    <h3 class="sub">Test Closure</h3>
+    <h4 class="subsub">Entry Criteria:</h4>
+    <ul class="tight">
+      <li>Test Case Reports, Defect Reports are ready.</li>
+    </ul>
+    <h4 class="subsub">Exit Criteria:</h4>
+    <ul class="tight">
+      <li>Test Summary Reports.</li>
+    </ul>
+  </section>
+
+  <!-- 10. Tools -->
+  <section id="tools">
+    <h2 class="sec">10. Tools</h2>
+    <p>The following are the list of Tools we will be using in this Project:</p>
+    <ul class="tight">
+      <li>JIRA Bug Tracking Tool</li>
+      <li>Mind map Tool</li>
+      <li>Snipping Screenshot Tool</li>
+      <li>Word and Excel documents</li>
+    </ul>
+  </section>
+
+  <!-- 11. Risks and Mitigations -->
+  <section id="risks">
+    <h2 class="sec">11. Risks and Mitigations</h2>
+    <p>The following are the list of risks possible and the ways to mitigate them:</p>
+    <ul>
+      <li><strong>Risk:</strong> Non-Availability of a Resource<br />
+          <strong>Mitigation:</strong> Backup Resource Planning</li>
+      <li><strong>Risk:</strong> Build URL is not working<br />
+          <strong>Mitigation:</strong> Resources will work on other tasks</li>
+      <li><strong>Risk:</strong> Less time for Testing<br />
+          <strong>Mitigation:</strong> Ramp up the resources based on the Client needs dynamically</li>
+    </ul>
+  </section>
+
+  <!-- 12. Approvals -->
+  <section id="approvals">
+    <h2 class="sec">12. Approvals</h2>
+    <p>Team will send different types of documents for Client Approval like below:</p>
+    <ul class="tight">
+      <li>Test Plan</li>
+      <li>Test Scenarios</li>
+      <li>Test Cases</li>
+      <li>Reports</li>
+    </ul>
+    <p>Testing will only continue to the next steps once these approvals are done.</p>
+  </section>
+
+  <footer class="doc-footer">
+    <span>Test Plan &mdash; VWO Login Dashboard &middot; Version 1.0</span>
+    <span>Confidential &mdash; For internal and client review</span>
+  </footer>
+
+</div>
+</body>
+</html>
