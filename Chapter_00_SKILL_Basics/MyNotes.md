@@ -407,3 +407,7 @@ Personalization: Customized login experience based on user history and preferenc
 This comprehensive PRD serves as the foundation for developing a world-class login dashboard that supports VWO's mission of helping businesses optimize their digital experiences while maintaining the highest standards of security, usability, and performance24.
 
 let me know whether you have understood the task or you need more information
+----
+
+Advanced Skill exexution:
+@Chapter_00_SKILL_Basics/01_Advanced_Skills/testplan-creator-skill_a/SKILL.md KAN-4 create a test plan for this jira in the @Chapter_00_SKILL_Basics/output folder in html and PDF formats

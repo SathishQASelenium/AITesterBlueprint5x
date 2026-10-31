@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Test Plan &mdash; KAN-4: Passkey &amp; SSO Login Options (VWO)</title>
+<style>
+  :root {
+    --brand: #E6280A;
+    --brand-dark: #B51E06;
+    --brand-soft: #FDECE8;
+    --gold: #F5B860;
+    --ink: #1F2933;
+    --ink-soft: #52606D;
+    --line: #E4CFC9;
+    --line-soft: #F4E7E3;
+    --bg: #FFFFFF;
+    --bg-alt: #FCF6F4;
+    --p0: #B51E06;
+    --p0-bg: #FBDDD6;
+    --p1: #9A6A00;
+    --p1-bg: #FCEFD3;
+    --p2: #3E6E2E;
+    --p2-bg: #E4F0DE;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    padding: 0 0 40px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 30px; }
+
+  /* ---------- Cover ---------- */
+  header.cover {
+    border-top: 6px solid var(--brand);
+    background: linear-gradient(180deg, var(--brand-soft) 0%, #FFFFFF 100%);
+    padding: 30px 0 24px;
+    margin-bottom: 8px;
+  }
+  .brand-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .brand-logo {
+    width: 58px; height: 58px; border-radius: 50%;
+    object-fit: cover; flex: 0 0 auto;
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  }
+  .brand-name { font-size: 19px; font-weight: 700; color: var(--brand-dark); letter-spacing: .2px; line-height: 1.15; }
+  .brand-name small {
+    display: block; font-size: 10.5px; font-weight: 600;
+    color: var(--ink-soft); letter-spacing: .6px; text-transform: uppercase; margin-top: 3px;
+  }
+  .client-chip {
+    margin-left: auto; text-align: right; font-size: 11px; color: var(--ink-soft);
+    border-left: 1px solid var(--line); padding-left: 16px;
+  }
+  .client-chip strong { display: block; color: var(--ink); font-size: 12.5px; }
+
+  h1.doc-title { font-size: 26px; line-height: 1.22; margin: 0 0 6px; color: var(--ink); }
+  .doc-sub { font-size: 14px; color: var(--ink-soft); margin: 0 0 20px; }
+
+  table.meta {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  }
+  table.meta th, table.meta td {
+    text-align: left; padding: 7px 14px;
+    border-bottom: 1px solid var(--line-soft); font-size: 12.5px; vertical-align: top;
+  }
+  table.meta th { width: 168px; background: var(--bg-alt); color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
+  table.meta tr:last-child th, table.meta tr:last-child td { border-bottom: none; }
+  .status-pill {
+    display: inline-block; background: var(--p1-bg); color: var(--p1);
+    border: 1px solid var(--gold); border-radius: 20px;
+    padding: 1px 10px; font-size: 11.5px; font-weight: 700;
+  }
+
+  /* ---------- Company blurb ---------- */
+  .company {
+    display: flex; gap: 18px; align-items: flex-start;
+    background: var(--bg-alt); border: 1px solid var(--line);
+    border-top: 3px solid var(--brand);
+    border-radius: 8px; padding: 14px 18px; margin: 18px 0 4px;
+  }
+  .company .logo-sm { width: 46px; height: 46px; border-radius: 50%; flex: 0 0 auto; }
+  .company h3 { margin: 0 0 4px; font-size: 13px; color: var(--brand-dark); text-transform: uppercase; letter-spacing: .5px; }
+  .company p { margin: 0 0 5px; font-size: 12.5px; color: var(--ink-soft); }
+  .company .facts { font-size: 12px; color: var(--ink); }
+  .company .facts span { font-weight: 700; color: var(--brand-dark); }
+
+  /* ---------- TOC ---------- */
+  nav.toc {
+    background: var(--bg-alt); border: 1px solid var(--line);
+    border-left: 4px solid var(--brand); border-radius: 8px;
+    padding: 16px 22px; margin: 22px 0 28px;
+  }
+  nav.toc h2 { margin: 0 0 10px; font-size: 13.5px; text-transform: uppercase; letter-spacing: .8px; color: var(--brand-dark); border: none; padding: 0; }
+  nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 34px; }
+  nav.toc li { margin: 3px 0; break-inside: avoid; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--brand); text-decoration: underline; }
+
+  /* ---------- Sections ---------- */
+  section { margin: 0 0 22px; }
+  h2.sec {
+    font-size: 18px; color: var(--brand-dark); margin: 30px 0 10px;
+    padding: 0 0 7px; border-bottom: 2px solid var(--brand-soft); scroll-margin-top: 16px;
+  }
+  h3.sub { font-size: 14px; color: var(--ink); margin: 16px 0 6px; }
+  h4.subsub { font-size: 12px; color: var(--brand-dark); margin: 12px 0 4px; text-transform: uppercase; letter-spacing: .4px; }
+
+  p { margin: 7px 0; }
+  ul, ol { margin: 7px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  ul.tight li { margin: 2px 0; }
+  strong { color: var(--ink); }
+
+  .note {
+    background: var(--brand-soft); border-left: 4px solid var(--brand);
+    padding: 9px 14px; border-radius: 0 6px 6px 0; color: var(--ink-soft);
+    font-size: 12.5px; margin: 12px 0;
+  }
+  .note strong { color: var(--brand-dark); }
+
+  /* ---------- Tables ---------- */
+  table.data { width: 100%; border-collapse: collapse; margin: 10px 0; border: 1px solid var(--line); font-size: 12.5px; }
+  table.data th { background: var(--brand); color: #fff; text-align: left; padding: 8px 11px; font-weight: 600; border: 1px solid var(--brand-dark); }
+  table.data td { padding: 8px 11px; border: 1px solid var(--line); vertical-align: top; }
+  table.data tbody tr:nth-child(even) { background: var(--bg-alt); }
+  table.data td.id { font-weight: 700; white-space: nowrap; color: var(--brand-dark); }
+  table.data tbody tr { break-inside: avoid; page-break-inside: avoid; }
+
+  .flag { font-weight: 700; }
+  .flag.ok { color: #2F7D32; }
+  .flag.warn { color: #B7791F; }
+  .flag.miss { color: var(--p0); }
+
+  .pill {
+    display: inline-block; border-radius: 20px; padding: 1px 9px;
+    font-size: 11px; font-weight: 700; letter-spacing: .3px;
+  }
+  .pill.p0 { background: var(--p0-bg); color: var(--p0); border: 1px solid #F0B5A8; }
+  .pill.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid var(--gold); }
+  .pill.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #B9D3AB; }
+
+  .stack-badge {
+    display: inline-block; background: var(--brand-soft); color: var(--brand-dark);
+    border: 1px solid #F0C7BE; border-radius: 20px; padding: 2px 12px;
+    font-size: 11.5px; font-weight: 600; margin: 3px 6px 3px 0;
+  }
+
+  /* ---------- Review gate ---------- */
+  .gate {
+    border: 2px dashed var(--brand); border-radius: 10px;
+    padding: 18px 22px; margin-top: 26px; background: #FFFDFC;
+  }
+  .gate h2 { border: none; color: var(--brand-dark); margin: 0 0 4px; padding: 0; font-size: 18px; }
+  .gate .gate-tag { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--brand); font-weight: 700; }
+  .gate .approve {
+    margin-top: 14px; padding: 10px 14px; background: var(--brand-soft);
+    border-radius: 6px; font-weight: 600; color: var(--brand-dark); font-size: 13px;
+  }
+
+  footer.doc-footer {
+    margin-top: 30px; padding-top: 12px; border-top: 1px solid var(--line);
+    color: var(--ink-soft); font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+
+  /* ---------- Print ---------- */
+  @page { size: A4; margin: 14mm 14mm; }
+  @media print {
+    body { font-size: 10.6px; color: #000; }
+    .wrap { max-width: none; padding: 0; }
+    header.cover { padding: 0 0 12px; }
+    nav.toc { background: #fff; }
+    h2.sec { break-after: avoid; page-break-after: avoid; }
+    h3.sub, h4.subsub { break-after: avoid; page-break-after: avoid; }
+    table, tr, .note, .gate { break-inside: avoid; page-break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= COVER ================= -->
+  <header class="cover">
+    <div class="brand-row">
+      <img class="brand-logo" src="data:image/png;base64,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" alt="TheTesting Academy logo" />
+      <div class="brand-name">
+        TheTesting Academy
+        <small>Quality Engineering &amp; Test Consulting</small>
+      </div>
+      <div class="client-chip">
+        <strong>Client: VWO (Wingify)</strong>
+        Prepared for QA review
+      </div>
+    </div>
+
+    <h1 class="doc-title">Test Plan &mdash; KAN-4: Add Passkey &amp; SSO Login Options to VWO Login Page</h1>
+    <p class="doc-sub">Drafted from JIRA story KAN-4 (Epic: Authentication Enhancements) &mdash; pending human review.</p>
+
+    <table class="meta">
+      <tbody>
+        <tr><th>Document</th><td>Test Plan</td></tr>
+        <tr><th>JIRA Ticket</th><td>KAN-4 &mdash; [VWO] Add Passkey and SSO Login Options to VWO Login Page</td></tr>
+        <tr><th>Issue Type / Epic</th><td>Story &middot; Epic: <em>Authentication Enhancements</em></td></tr>
+        <tr><th>Priority</th><td>High (per ticket description) &middot; JIRA field: Medium</td></tr>
+        <tr><th>Product / Feature</th><td>VWO Login Page &mdash; new <em>Sign in using SSO</em> &amp; <em>Sign in with Passkey</em> options</td></tr>
+        <tr><th>Prepared By</th><td>TheTesting Academy &mdash; QA Team</td></tr>
+        <tr><th>Version</th><td>1.0 (Draft)</td></tr>
+        <tr><th>Date</th><td>31 October 2026</td></tr>
+        <tr><th>Status</th><td><span class="status-pill">Draft &mdash; For Approval</span></td></tr>
+      </tbody>
+    </table>
+  </header>
+
+  <!-- ================= COMPANY ================= -->
+  <div class="company">
+    <img class="logo-sm" src="data:image/png;base64,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" alt="TheTesting Academy logo" />
+    <div>
+      <h3>Prepared by TheTesting Academy</h3>
+      <p>TheTesting Academy is a quality-engineering and test-consulting partner specialising in
+         authentication, A/B testing and digital-experience platforms. This plan was produced for
+         VWO, a <strong>Wingify</strong> product used for A/B testing, conversion-rate optimisation and
+         behavioural analytics across thousands of brands worldwide.</p>
+      <div class="facts">
+        Client context: <span>VWO / Wingify</span> &middot; Domain: <span>A/B testing platform</span> &middot;
+        Approx. scale: <span>~5,000 employees</span> &middot; Focus: <span>secure, frictionless authentication</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOC ================= -->
+  <nav class="toc" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#scope">Scope &amp; Objectives</a></li>
+      <li><a href="#gaps">Gaps &amp; Questions for the Author</a></li>
+      <li><a href="#scenarios">Test Scenarios (P0/P1/P2)</a></li>
+      <li><a href="#data">Test Data &amp; Environment</a></li>
+      <li><a href="#risks">Risks &amp; Assumptions</a></li>
+      <li><a href="#criteria">Entry / Exit Criteria</a></li>
+      <li><a href="#resources">Resource Allocation</a></li>
+      <li><a href="#timeline">Timelines &amp; Sprint Details</a></li>
+      <li><a href="#gate">Human Review Gate</a></li>
+    </ol>
+  </nav>
+
+  <!-- ================= 1. SCOPE ================= -->
+  <section id="scope">
+    <h2 class="sec">1. Scope &amp; Objectives</h2>
+
+    <h3 class="sub">In scope</h3>
+    <ul class="tight">
+      <li><strong>UI visibility &amp; placement (AC1):</strong> presence and position of the
+          &ldquo;Sign in using SSO&rdquo; and &ldquo;Sign in with Passkey&rdquo; options on the login page,
+          including their placement below the &ldquo;Sign in with Google&rdquo; option.</li>
+      <li><strong>SSO login flow (AC2):</strong> happy path (valid SSO credentials &rarr; authenticated &rarr; dashboard)
+          and negative path (invalid credentials &rarr; appropriate error message).</li>
+      <li><strong>Passkey login flow (AC3):</strong> happy path (registered &amp; verified passkey &rarr; logged in &rarr; dashboard),
+          and the &ldquo;no passkey available&rdquo; fallback / guidance path.</li>
+      <li><strong>Error handling (AC4):</strong> failed SSO authentication, passkey authentication failure,
+          and unsupported browser/device for passkeys.</li>
+      <li><strong>Compatibility (AC5):</strong> passkey flow across supported browsers/devices; SSO across all configured identity providers.</li>
+      <li><strong>Security (AC6):</strong> secure protocols (OAuth / SAML / WebAuthn) and no exposure of sensitive data in the UI or network logs.</li>
+      <li><strong>Regression of existing auth:</strong> email/password and &ldquo;Sign in with Google&rdquo; must remain unaffected.</li>
+    </ul>
+
+    <h3 class="sub">Out of scope (per ticket)</h3>
+    <ul class="tight">
+      <li>Passkey <em>registration</em> flow &mdash; covered in a separate story.</li>
+      <li>SSO provider configuration / IdP setup.</li>
+      <li>Redesign of existing authentication methods beyond verifying no regression.</li>
+    </ul>
+
+    <h3 class="sub">Objective</h3>
+    <p>&ldquo;Tested&rdquo; for this ticket means every acceptance criterion is demonstrated as an observable
+       pass/fail; both new login flows are verified secure, reliable and usable across supported
+       environments; the three defined error states behave correctly and leak no sensitive data; and
+       existing login methods continue to work without regression.</p>
+
+    <h3 class="sub">Tech / platform context</h3>
+    <p>
+      <span class="stack-badge">WebAuthn (Passkey)</span>
+      <span class="stack-badge">OAuth / SAML (SSO)</span>
+      <span class="stack-badge">Web login page</span>
+      <span class="stack-badge">Redirect to Dashboard</span>
+    </p>
+    <div class="note">
+      <strong>Note:</strong> Protocol details (SAML vs OAuth per IdP, which WebAuthn platform authenticators
+      are supported) are not stated in the ticket and are flagged in Section 2 as gaps.
+    </div>
+  </section>
+
+  <!-- ================= 2. GAPS ================= -->
+  <section id="gaps">
+    <h2 class="sec">2. Gaps &amp; Questions for the Author</h2>
+    <p>Each row scores KAN-4 against the requirement gap-analysis checklist
+       (<span class="flag ok">&#10003; present</span> &middot;
+        <span class="flag warn">&#9888; ambiguous</span> &middot;
+        <span class="flag miss">&#10007; missing</span>). Every &#9888;/&#10007; becomes an open question.</p>
+
+    <table class="data">
+      <thead>
+        <tr><th style="width:34px">#</th><th style="width:130px">Area</th><th style="width:52px">Status</th><th>Finding &amp; question to the author</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="id">G1</td><td>Acceptance criteria testability</td><td><span class="flag warn">&#9888;</span></td>
+          <td>ACs describe outcomes at a high level but not observable specifics. <em>What are the exact
+              button labels, and is the passkey option hidden, disabled, or shown-with-explanatory-text when the device lacks WebAuthn?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G2</td><td>Error messaging</td><td><span class="flag warn">&#9888;</span></td>
+          <td>AC4 says &ldquo;proper error messages&rdquo; without text or behaviour. <em>Please provide
+              the exact error copy and behaviour for: failed SSO, passkey failure, and unsupported browser/device.</em></td>
+        </tr>
+        <tr>
+          <td class="id">G3</td><td>Boundary &amp; empty states</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No boundary/empty states defined. <em>What happens with: expired/revoked passkey, cancelled
+              OS biometric prompt, timed-out SSO assertion, user with no passkeys registered, or 0 configured IdPs?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G4</td><td>User cancellation</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No path for a user abandoning/cancelling the SSO redirect or passkey prompt. <em>Should the user
+              return to the login page with a neutral message and no partial session?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G5</td><td>State / session behaviour</td><td><span class="flag miss">&#10007;</span></td>
+          <td>Post-login session lifecycle is unstated. <em>How do SSO and passkey sessions interact with
+              session timeout, logout, &ldquo;remember me&rdquo;, and existing MFA/2FA?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G6</td><td>Test data</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No test data specified. <em>Can we be provided: SSO test accounts per IdP, a user with a
+              registered passkey, a user without one, and invalid/revoked credentials?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G7</td><td>Environment / flags</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No environment or feature-flag details. <em>Which environment (QA/Staging) hosts this, and is
+              there a feature flag to toggle SSO/passkey independently?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G8</td><td>IdP &amp; dependencies</td><td><span class="flag warn">&#9888;</span></td>
+          <td>AC5 says &ldquo;all configured identity providers&rdquo; but none are named. <em>Which IdPs
+              (SAML/OAuth: Azure AD, Okta, Google Workspace&hellip;) must SSO be validated against?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G9</td><td>Browser/device matrix</td><td><span class="flag warn">&#9888;</span></td>
+          <td>&ldquo;Supported browsers/devices only&rdquo; is undefined. <em>What is the supported matrix for
+              passkeys (Chrome/Edge/Safari versions, Windows Hello, Touch ID, Android biometrics, hardware keys)?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G10</td><td>Non-functional &ndash; performance</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No performance expectations. <em>Any target for SSO redirect round-trip or passkey
+              assertion latency under load?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G11</td><td>Accessibility (a11y)</td><td><span class="flag miss">&#10007;</span></td>
+          <td>A11y not mentioned explicitly. <em>Should the two new options meet WCAG 2.1 AA &mdash; keyboard operable,
+              correct focus order, accessible names? (Ticket lists &ldquo;responsiveness and accessibility&rdquo; in its scenarios only.)</em></td>
+        </tr>
+        <tr>
+          <td class="id">G12</td><td>Security / roles</td><td><span class="flag warn">&#9888;</span></td>
+          <td>AC6 is generic. <em>Which roles/tenants may use SSO; must we test session-fixation, replay,
+              and token/PII leakage in logs explicitly?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G13</td><td>Regression surface</td><td><span class="flag warn">&#9888;</span></td>
+          <td>Impact on existing login is not stated. <em>Confirm that email/password and Google login must be
+              regression-tested, including layout shifts from the new buttons.</em></td>
+        </tr>
+        <tr>
+          <td class="id">G14</td><td>Designs / mockups</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No designs linked (ticket has no attachments, components or Figma link). <em>Can the Figma/mockup and the intended
+              visual spec for the two options be shared?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G15</td><td>Wording clarity</td><td><span class="flag miss">&#10007;</span></td>
+          <td>Vague terms: &ldquo;seamlessly&rdquo;, &ldquo;smooth user experience&rdquo;, &ldquo;appropriate/proper error messages&rdquo;.
+              <em>Can these be quantified so two engineers read them the same way?</em></td>
+        </tr>
+        <tr>
+          <td class="id">G16</td><td>Rollback / feature flag</td><td><span class="flag miss">&#10007;</span></td>
+          <td>No rollback path defined. <em>If SSO/passkey misbehaves in production, can it be disabled without
+              redeploy, and what is the fallback login experience?</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ================= 3. SCENARIOS ================= -->
+  <section id="scenarios">
+    <h2 class="sec">3. Test Scenarios</h2>
+    <p>Priority is risk-based: <span class="pill p0">P0</span> critical / release-blocking &middot;
+       <span class="pill p1">P1</span> important &middot; <span class="pill p2">P2</span> lower risk.
+       Every scenario maps to an AC or an open gap (see Section 2).</p>
+
+    <table class="data">
+      <thead>
+        <tr><th style="width:52px">ID</th><th style="width:56px">Pri</th><th style="width:78px">Type</th><th>Scenario</th><th style="width:118px">Maps to</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="id">TS-01</td><td><span class="pill p0">P0</span></td><td>Positive</td>
+            <td>Both &ldquo;Sign in using SSO&rdquo; and &ldquo;Sign in with Passkey&rdquo; options are visible on the login page on first load.</td><td>AC1</td></tr>
+        <tr><td class="id">TS-02</td><td><span class="pill p0">P0</span></td><td>Positive</td>
+            <td>The two new options are positioned <em>below</em> &ldquo;Sign in with Google&rdquo;, in the intended order and styling.</td><td>AC1</td></tr>
+        <tr><td class="id">TS-03</td><td><span class="pill p1">P1</span></td><td>Boundary</td>
+            <td>New options render correctly at minimum/maximum supported viewport widths and with long/localized labels (no overlap/truncation).</td><td>AC1 / G9 / G11</td></tr>
+        <tr><td class="id">TS-04</td><td><span class="pill p1">P1</span></td><td>Regression</td>
+            <td>Existing email/password fields and &ldquo;Sign in with Google&rdquo; remain visible, correctly ordered and functional.</td><td>G13</td></tr>
+        <tr><td class="id">TS-05</td><td><span class="pill p0">P0</span></td><td>Positive</td>
+            <td>Clicking &ldquo;Sign in using SSO&rdquo; with valid SSO credentials authenticates the user and redirects to the dashboard.</td><td>AC2</td></tr>
+        <tr><td class="id">TS-06</td><td><span class="pill p0">P0</span></td><td>Negative</td>
+            <td>SSO login with invalid credentials shows an appropriate error and does <em>not</em> grant dashboard access.</td><td>AC2 / G2</td></tr>
+        <tr><td class="id">TS-07</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>SSO with an expired/revoked IdP account (or de-provisioned user) is rejected with a clear message.</td><td>G3 / G8</td></tr>
+        <tr><td class="id">TS-08</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>User cancels the SSO login at the IdP screen &rarr; returns to login page with a neutral message and no partial session.</td><td>G4</td></tr>
+        <tr><td class="id">TS-09</td><td><span class="pill p1">P1</span></td><td>Boundary</td>
+            <td>SSO succeeds against <em>each</em> configured identity provider (every supported IdP / protocol).</td><td>AC5 / G8</td></tr>
+        <tr><td class="id">TS-10</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>After SSO login the correct tenant/account is mapped; no cross-account or cross-tenant data is exposed.</td><td>AC6 / G12</td></tr>
+        <tr><td class="id">TS-11</td><td><span class="pill p0">P0</span></td><td>Positive</td>
+            <td>Clicking &ldquo;Sign in with Passkey&rdquo; with a registered, verified passkey logs the user in and redirects to the dashboard.</td><td>AC3</td></tr>
+        <tr><td class="id">TS-12</td><td><span class="pill p0">P0</span></td><td>Negative</td>
+            <td>Passkey authentication failure (mismatch / failed biometric) shows an appropriate error and blocks access.</td><td>AC4 / G2</td></tr>
+        <tr><td class="id">TS-13</td><td><span class="pill p0">P0</span></td><td>Negative</td>
+            <td>User with <em>no</em> registered passkey sees the defined fallback/guidance message (not a broken state).</td><td>AC3 / G3</td></tr>
+        <tr><td class="id">TS-14</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>Passkey that was deleted/revoked on the device produces a graceful error and guidance.</td><td>G3</td></tr>
+        <tr><td class="id">TS-15</td><td><span class="pill p1">P1</span></td><td>Boundary</td>
+            <td>On an unsupported browser/device (no WebAuthn), the passkey option shows the defined message and cannot be used.</td><td>AC4 / AC5 / G1</td></tr>
+        <tr><td class="id">TS-16</td><td><span class="pill p1">P1</span></td><td>Boundary</td>
+            <td>Passkey login works with multiple/roaming authenticators (security key, cross-device) where supported.</td><td>AC5 / G9</td></tr>
+        <tr><td class="id">TS-17</td><td><span class="pill p2">P2</span></td><td>Boundary</td>
+            <td>Expired passkey challenge / assertion timeout is handled with a retry-able error, not a crash.</td><td>G3</td></tr>
+        <tr><td class="id">TS-18</td><td><span class="pill p0">P0</span></td><td>Negative</td>
+            <td>All three error states (failed SSO, passkey failure, unsupported device) render the correct, non-sensitive message.</td><td>AC4 / AC6</td></tr>
+        <tr><td class="id">TS-19</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>Network failure / interrupted redirect mid-authentication surfaces a recoverable error and leaves no stuck session.</td><td>G3 / G5</td></tr>
+        <tr><td class="id">TS-20</td><td><span class="pill p0">P0</span></td><td>Negative</td>
+            <td>No sensitive data (credentials, tokens, PII) appears in the UI, URLs, or network/browser logs during either flow.</td><td>AC6</td></tr>
+        <tr><td class="id">TS-21</td><td><span class="pill p0">P0</span></td><td>Positive</td>
+            <td>SSO and passkey flows use secure protocols end-to-end (OAuth/SAML/WebAuthn over HTTPS).</td><td>AC6</td></tr>
+        <tr><td class="id">TS-22</td><td><span class="pill p1">P1</span></td><td>Negative</td>
+            <td>Session-fixation / replay attempts after SSO or passkey login are rejected (new session issued on login).</td><td>AC6 / G12</td></tr>
+        <tr><td class="id">TS-23</td><td><span class="pill p1">P1</span></td><td>Compatibility</td>
+            <td>Both flows verified across the agreed browser/OS/device matrix for the login page.</td><td>AC5 / G9</td></tr>
+        <tr><td class="id">TS-24</td><td><span class="pill p1">P1</span></td><td>Accessibility</td>
+            <td>New options are keyboard operable with a logical focus order and accessible names/labels (WCAG 2.1 AA).</td><td>G11</td></tr>
+        <tr><td class="id">TS-25</td><td><span class="pill p2">P2</span></td><td>Boundary</td>
+            <td>User can retry after a failed SSO/passkey attempt without page reload or lockout.</td><td>G3 / G4</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>Traceability:</strong> AC1&rarr;TS-01..03, AC2&rarr;TS-05/06, AC3&rarr;TS-11/13, AC4&rarr;TS-12/15/18,
+      AC5&rarr;TS-09/16/23, AC6&rarr;TS-10/20/21/22. Remaining scenarios cover the flagged gaps.
+    </div>
+  </section>
+
+  <!-- ================= 4. DATA & ENV ================= -->
+  <section id="data">
+    <h2 class="sec">4. Test Data &amp; Environment</h2>
+
+    <h3 class="sub">Test data required (to be supplied &mdash; see G6)</h3>
+    <table class="data">
+      <thead><tr><th style="width:200px">Data set</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>SSO test account per IdP</td><td>Valid SSO credentials for each configured identity provider (AC5).</td></tr>
+        <tr><td>Invalid / revoked SSO account</td><td>Negative SSO path and de-provisioned user (AC2, G3).</td></tr>
+        <tr><td>User with registered passkey</td><td>Successful passkey login (AC3).</td></tr>
+        <tr><td>User without any passkey</td><td>Fallback/guidance message (AC3).</td></tr>
+        <tr><td>Revoked / migrated passkey</td><td>Graceful failure after device change (G3).</td></tr>
+        <tr><td>Unsupported browser/device</td><td>No-WebAuthn behaviour (AC4).</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Environment &amp; configuration</h3>
+    <ul class="tight">
+      <li>Target environment: QA / Staging (per ticket DoD &mdash; &ldquo;deployed to staging&rdquo;) &mdash; <em>exact URL to confirm (G7)</em>.</li>
+      <li>Feature flags to independently enable SSO and Passkey &mdash; <em>availability to confirm (G7/G16)</em>.</li>
+      <li>At least one configured IdP with valid credentials for SSO testing.</li>
+      <li>Devices/authenticators: passkey-capable laptop (Windows Hello / Touch ID), mobile (Android/iOS), and an unsupported device.</li>
+    </ul>
+
+    <h3 class="sub">Roles / permissions</h3>
+    <ul class="tight">
+      <li>Standard user, enterprise SSO user, and (if applicable) admin &mdash; <em>role matrix to confirm (G12)</em>.</li>
+    </ul>
+
+    <h3 class="sub">Browsers / devices (indicative matrix &mdash; pending G9)</h3>
+    <ul class="tight">
+      <li>Windows 10/11 &ndash; Chrome, Edge (passkey + SSO)</li>
+      <li>macOS &ndash; Safari, Chrome (passkey + SSO)</li>
+      <li>Android &ndash; Chrome (passkey + SSO)</li>
+      <li>iOS &ndash; Safari (passkey + SSO)</li>
+      <li>Legacy/unsupported browser &ndash; negative passkey path</li>
+    </ul>
+  </section>
+
+  <!-- ================= 5. RISKS ================= -->
+  <section id="risks">
+    <h2 class="sec">5. Risks &amp; Assumptions</h2>
+
+    <h3 class="sub">Assumptions made</h3>
+    <ul class="tight">
+      <li>A staging build with the feature deployed and enabled is available for testing.</li>
+      <li>At least one SSO identity provider is configured with usable test credentials.</li>
+      <li>A passkey-capable device/authenticator is available; error copy/design will be provided.</li>
+      <li>&ldquo;Dashboard&rdquo; is the authenticated landing page reached after a successful login.</li>
+    </ul>
+
+    <h3 class="sub">Risks</h3>
+    <table class="data">
+      <thead><tr><th style="width:300px">Risk</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Passkey testing depends on specific hardware/OS/browser support.</td><td>Prepare a device matrix up front; use virtual/emulated authenticators where valid.</td></tr>
+        <tr><td>SSO availability relies on external IdP uptime.</td><td>Confirm IdP status before cycles; schedule around IdP maintenance.</td></tr>
+        <tr><td>Undefined error copy / design could cause rework.</td><td>Raise G2/G14 early; draft scenarios now, finalise assertions after answers.</td></tr>
+        <tr><td>Unclear supported-browser matrix (G9) risks under/over-testing.</td><td>Get the matrix agreed before execution; prioritise P0 on primary browsers.</td></tr>
+        <tr><td>Security scope (AC6) is broad and generic.</td><td>Agree explicit security checks (TS-20..22) with the author.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ================= 6. CRITERIA ================= -->
+  <section id="criteria">
+    <h2 class="sec">6. Entry / Exit Criteria</h2>
+
+    <h3 class="sub">Entry criteria</h3>
+    <ul class="tight">
+      <li>Feature deployed to staging and reachable; SSO/passkey flags enabled.</li>
+      <li>Test data available (SSO accounts, passkey-registered users, invalid/revoked accounts).</li>
+      <li>At least one IdP configured with credentials.</li>
+      <li>Error copy and design spec available (or explicit waiver agreed).</li>
+      <li>This test plan reviewed and approved by the QA owner.</li>
+    </ul>
+
+    <h3 class="sub">Exit criteria</h3>
+    <ul class="tight">
+      <li>All P0 scenarios pass; no open Critical/High defects (per ticket DoD).</li>
+      <li>All acceptance criteria (AC1&ndash;AC6) demonstrated as pass.</li>
+      <li>Regression of existing email/password and Google login confirmed green.</li>
+      <li>Test summary report produced; open questions in Section 2 resolved or explicitly waived.</li>
+      <li>QA sign-off recorded (per ticket DoD: &ldquo;QA sign-off completed&rdquo;).</li>
+    </ul>
+  </section>
+
+  <!-- ================= 7. RESOURCES ================= -->
+  <section id="resources">
+    <h2 class="sec">7. Resource Allocation</h2>
+    <table class="data">
+      <thead><tr><th style="width:230px">Role</th><th style="width:70px">Count</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr><td>QA Lead / Test Manager</td><td>1</td><td>Plan sign-off, coverage ownership, defect triage, client communication.</td></tr>
+        <tr><td>Manual Test Engineer(s)</td><td>2</td><td>Execute UI, SSO, passkey, error, security and compatibility scenarios.</td></tr>
+        <tr><td>Automation Engineer</td><td>1</td><td>Automate P0 flows (Playwright) where feasible after approval.</td></tr>
+        <tr><td>Dev POCs (Frontend / Backend / DevOps)</td><td>&asymp;3</td><td>Environment, IdP setup, defect fixes and clarifications.</td></tr>
+        <tr><td>Business Analyst / Product Owner</td><td>1</td><td>Resolve gaps in Section 2 and confirm acceptance.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ================= 8. TIMELINE ================= -->
+  <section id="timeline">
+    <h2 class="sec">8. Timelines &amp; Sprint Details</h2>
+    <ul class="tight">
+      <li><strong>Epic:</strong> Authentication Enhancements &middot; <strong>Sprint:</strong> current (KAN-4 created 31 Oct 2026) &mdash; sprint name/number to confirm.</li>
+      <li><strong>Estimated effort:</strong> ~1 sprint of test execution across 2 engineers, with contingency for device/IdP setup.</li>
+    </ul>
+    <table class="data">
+      <thead><tr><th style="width:58%">Task</th><th>Dates</th></tr></thead>
+      <tbody>
+        <tr><td>Test plan review &amp; gap resolution (Section 2)</td><td>To schedule</td></tr>
+        <tr><td>Test data &amp; environment / IdP setup</td><td>To schedule</td></tr>
+        <tr><td>Test case design &amp; review</td><td>To schedule</td></tr>
+        <tr><td>Test execution (P0 &rarr; P1 &rarr; P2)</td><td>To schedule</td></tr>
+        <tr><td>Regression &amp; security validation</td><td>To schedule</td></tr>
+        <tr><td>Test summary report &amp; sign-off</td><td>To schedule</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Dates are intentionally left blank</strong> &mdash; scheduling depends on the sprint plan and answers to Section 2.</div>
+  </section>
+
+  <!-- ================= GATE ================= -->
+  <div class="gate" id="gate">
+    <span class="gate-tag">Human Review Gate &mdash; Mandatory</span>
+    <h2>This plan is a DRAFT and is not approved.</h2>
+    <p><strong>I assumed:</strong> a staging build with SSO/passkey deployed and enabled; at least one IdP configured with usable credentials;
+       a passkey-capable device is available; &ldquo;dashboard&rdquo; is the post-login landing page; error copy/design will be provided.</p>
+    <p><strong>I could not confirm</strong> (the KAN-4 ticket contained no attachments, Figma links, components, labels or fix version, and left the following unstated):
+       exact button labels &amp; styling; exact error text; boundary/empty/cancellation states; session behaviour vs. MFA/logout;
+       test data; environment &amp; feature flags; the list of configured IdPs; the supported browser/device matrix; performance targets;
+       accessibility expectations; role/permission rules; rollback behaviour.</p>
+    <p><strong>Open questions blocking sign-off:</strong> G1&ndash;G16 in Section 2 &mdash; in priority order: G2 (error copy), G6/G7 (data &amp; environment),
+       G8/G9 (IdPs &amp; browser matrix), G12 (security roles), G14 (designs), G16 (rollback).</p>
+    <div class="approve">
+      &rarr; Please <strong>approve or edit</strong> this plan before I write detailed test cases or any automation.
+      I will not proceed to test-case creation until a human signs off.
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <span>Test Plan &mdash; KAN-4 (VWO Passkey &amp; SSO Login) &middot; Version 1.0 (Draft) &middot; TheTesting Academy</span>
+    <span>Confidential &mdash; For internal and client review</span>
+  </footer>
+
+</div>
+</body>
+</html>

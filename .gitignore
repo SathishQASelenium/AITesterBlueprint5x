@@ -1,6 +1,9 @@
 # Command Code local agent state
 .commandcode/
 
+# Secrets / local config
+.env
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

@@ -6,23 +6,35 @@ A hands-on learning repository for building AI-assisted QA workflows with Comman
 
 ```
 AITesterBlueprint5x/
-├── Chapter_00_SKILL_Basics/        # Authoring and using Command Code skills
-│   ├── skills/
-│   │   ├── testcase-creator-skill/     # Generates test cases from a PRD
-│   │   ├── testplan-creator-skill/     # Generates a test plan from a PRD
-│   │   └── api-response-validator-skill/
-│   └── output/                     # Generated deliverables (HTML, PDF, XLSX, CSV)
-│       ├── VWO_Login_Dashboard_Test_Cases.{html,xlsx,csv}
-│       └── VWO_Login_Dashboard_Test_Plan.{html,pdf}
-├── Chapter_01_LLM_Basics/          # (placeholders — content to be added)
-└── Chapter_02_Prompt_Engineering/  # (placeholders — content to be added)
+├── Chapter_00_SKILL_Basics/            # Authoring and using Command Code skills
+│   ├── 00_Basic_Skills/                # PRD-driven skills
+│   │   ├── api-response-validator-skill/   # Placeholder (SKILL.md pending)
+│   │   ├── testcase-creator-skill/         # Generates test cases from a PRD
+│   │   └── testplan-creator-skill/         # Generates a test plan from a PRD
+│   ├── 01_Advanced_Skills/
+│   │   └── testplan-creator-skill_a/   # Jira-driven test plan (fetch → gap analysis → review gate)
+│   │       ├── references/             # Gap-analysis checklist + plan template
+│   │       ├── scripts/                # fetch-jira.{sh,py} — pull a ticket over the Jira REST API
+│   │       ├── misc/                   # Company details + logo (mycompanydetails.md, company.png)
+│   │       └── assets/                 # Skill assets (currently empty)
+│   ├── output/                         # Generated deliverables (HTML, PDF, XLSX, CSV)
+│   │   ├── KAN-4_Passkey_SSO_Login_Test_Plan.{html,pdf}
+│   │   ├── VWO_Login_Dashboard_Test_Plan.{html,pdf}
+│   │   └── VWO_Login_Dashboard_Test_Cases.{html,xlsx,csv}
+│   ├── resources/                      # Source / reference material (e.g. VWO-49.doc)
+│   ├── .env                            # Jira credentials for the advanced skill (see Configuration)
+│   └── MyNotes.md                      # Working notes and context for generated plans
+├── Chapter_01_LLM_Basics/              # (placeholder — content to be added)
+└── Chapter_02_Prompt_Engineering/      # (placeholder — content to be added)
 ```
 
 ## Skills
 
 Skills are reusable instruction modules that Command Code loads on demand. Each one lives in its own folder with a `SKILL.md` file that declares frontmatter (`name`, `description`, `version`, `author`, `license`, `tags`) followed by the instructions the agent follows.
 
-### `testcase-creator-skill`
+### Basic skills — `Chapter_00_SKILL_Basics/00_Basic_Skills/`
+
+#### `testcase-creator-skill`
 
 Creates test cases from a PRD or a direct trigger such as *"create a test case for X"*, using the VWO.com template.
 
@@ -30,38 +42,72 @@ Output columns: `Scenario_TID`, `TestCase Description`, `PreCondition`, `TestSte
 
 Deliverables: CSV, XLSX, and HTML.
 
-### `testplan-creator-skill`
+#### `testplan-creator-skill`
 
 Creates a full test plan from a PRD using the VWO.com template, covering objective, scope, inclusions, environments, defect reporting, strategy, schedule, deliverables, entry/exit criteria, tools, risks, and approvals.
 
 Deliverables: HTML and PDF.
 
-### `api-response-validator-skill`
+#### `api-response-validator-skill`
 
-Reserved for validating API responses (spec pending).
+Reserved for validating API responses. The `SKILL.md` is currently a placeholder.
 
-## Core Principles
+### Advanced skill — `Chapter_00_SKILL_Basics/01_Advanced_Skills/testplan-creator-skill_a/`
 
-Both content-generating skills follow the same rules:
+#### `advance-testplan-creator`
 
-1. Use only information provided by the user.
-2. Do not invent requirements beyond what is given.
+Turns a **JIRA ticket** into a review-ready test plan. It is a stricter, Jira-driven evolution of the basic test-plan skill and follows a fixed workflow:
 
-Each skill also enforces a safety rule: generated output must not contain personal information or anything risky.
+1. **Fetch the ticket** — pulls the issue over the Jira REST API (`scripts/fetch-jira.sh`) and captures summary, description, acceptance criteria, components, links, and fix version.
+2. **Analyse against a checklist** — scores the ticket against `references/requirement-checklist.md`, marking each item ✅ present / ⚠️ ambiguous / ❌ missing.
+3. **Surface the gaps** — produces a *"Gaps & Questions for the Author"* section (the highest-value output).
+4. **Draft the plan** — fills `references/test-plan-template.md`, driving scenarios from the acceptance criteria and gaps; tags each scenario P0/P1/P2; adds company info and logo from `misc/`.
+5. **Stop for human review** — ends with a mandatory **Human Review Gate** and never marks the plan as final.
+
+Deliverables: HTML and PDF.
 
 ## Generated Artifacts
 
-Example deliverables produced by the skills for a VWO login/dashboard scenario are stored in `Chapter_00_SKILL_Basics/output/`. The PDF is produced from the finished HTML so the two match 1:1.
+Example deliverables produced by the skills are stored in `Chapter_00_SKILL_Basics/output/`:
+
+- **KAN-4** — VWO Passkey & SSO login test plan (HTML + PDF), generated by the advanced skill.
+- **VWO Login Dashboard** — test plan (HTML + PDF) and test cases (HTML, XLSX, CSV).
+
+The PDF is produced from the finished HTML so the two match 1:1.
+
+## Core Principles
+
+The content-generating skills follow the same rules:
+
+1. Use only information provided by the user (or fetched from the linked ticket).
+2. Do not invent requirements beyond what is given.
+3. Never mark a plan "final" — a human owns sign-off.
+
+Each skill also enforces a safety rule: generated output must not contain personal information or anything risky.
+
+## Configuration
+
+The advanced `testplan-creator-skill_a` skill fetches tickets from Jira and reads credentials from `Chapter_00_SKILL_Basics/.env`:
+
+```
+JIRA_BASE_URL=https://<your-org>.atlassian.net
+JIRA_EMAIL=<your-email>
+JIRA_API_TOKEN=<your-api-token>
+```
+
+> **Security:** `.env` holds a live API token. Do not commit it — add it to `.gitignore` and rotate the token if it has ever been exposed.
 
 ## Usage
 
 1. Open the repository in Command Code.
-2. Provide a PRD (or a trigger phrase such as *"create a test plan for X"*).
-3. The matching skill generates the deliverable and writes it to the relevant chapter's `output/` folder.
+2. Choose a trigger:
+   - **PRD-driven** (basic skills): provide a PRD or a phrase such as *"create a test plan for X"* / *"create a test case for X"*.
+   - **Jira-driven** (advanced skill): provide a Jira key such as *"create a test plan for KAN-4"*.
+3. The matching skill generates the deliverable and writes it to `Chapter_00_SKILL_Basics/output/`.
 
 ## Author
 
-Sathish — The Testing Academy
+Sathish Kumar A S — The Testing Academy
 
 ## License
 
