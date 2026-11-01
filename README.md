@@ -24,7 +24,8 @@ AITesterBlueprint5x/
 │   ├── resources/                      # Source / reference material (e.g. VWO-49.doc)
 │   ├── .env                            # Jira credentials for the advanced skill (see Configuration)
 │   └── MyNotes.md                      # Working notes and context for generated plans
-├── Chapter_01_LLM_Basics/              # (placeholder — content to be added)
+├── Chapter_01_LLM_Basics/              # LLM fundamentals self-study guide
+│   └── LLM_Fundamentals.html           # Interactive guide: lessons, labs, glossary
 └── Chapter_02_Prompt_Engineering/      # (placeholder — content to be added)
 ```
 
@@ -74,6 +75,18 @@ Example deliverables produced by the skills are stored in `Chapter_00_SKILL_Basi
 - **VWO Login Dashboard** — test plan (HTML + PDF) and test cases (HTML, XLSX, CSV).
 
 The PDF is produced from the finished HTML so the two match 1:1.
+
+## Chapter 01 — LLM Basics
+
+`Chapter_01_LLM_Basics/LLM_Fundamentals.html` is a self-contained, interactive study guide covering LLM fundamentals from scratch, aimed at QA testers new to AI:
+
+- **13 short lessons** with hand-drawn diagrams — tokens, embeddings, context windows, sampling, prompting, and more.
+- **9 hands-on labs** — tokenizers, probability bars, context budgeting, and other runnable demos that work entirely in the browser.
+- **Quick checks** — collapsible checkpoint questions to test understanding.
+- **Glossary** — 97 AI terms, searchable and filterable.
+- **Reference** — print-friendly layout and a curated source list.
+
+Open the file directly in any browser — no build step or server required.
 
 ## Core Principles
 
