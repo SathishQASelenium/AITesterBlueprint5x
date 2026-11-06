@@ -1,4 +1,4 @@
-Have to use the below documents for generating the test plan
+# Chapter_00_SKILL_Basics/00_Basic_Skills/testplan-creator-skill
 
 Test Plan Template - [docs.google.com/document/d/1UO54JPp_kVC-dQVCzek6F1aD76bxEX_p/edit?usp=sharing&ouid=104755920778477387077&rtpof=true&sd=true](https://docs.google.com/document/d/1UO54JPp_kVC-dQVCzek6F1aD76bxEX_p/edit?usp=sharing&ouid=104755920778477387077&rtpof=true&sd=true) 
 Requirement (PRD)
@@ -6,8 +6,7 @@ Requirement (PRD)
 
 Content to give in context window for generating Test plan:
 
-@Chapter_00_SKILL_Basics/skills/testplan-creator-skill/SKILL.md 
-@SKILL.md
+@Chapter_00_SKILL_Basics/00_Basic_Skills/testplan-creator-skill/SKILL.md
 create a test plan using that skill. Here is the product requirement document
 
 **
@@ -247,12 +246,10 @@ Create a proper html file and pdf file with the format.
 
 
 
-Content to give in context window for generating Test Case:
+# Chapter_00_SKILL_Basics/00_Basic_Skills/testcase-creator-skill:
 
-Note: Initially we haven't mentioned about the xlsx and html formats
-
-@Chapter_00_SKILL_Basics/skills/testcase-creator-skill/SKILL.md 
-I want you to create test cases based on the attached skill in the csv format in the output folder. 
+@Chapter_00_SKILL_Basics/00_Basic_Skills/testcase-creator-skill/SKILL.md 
+I want you to create test cases based on the attached skill in the csv, xlsx, html format in the output folder. 
 
 @Chapter_00_SKILL_Basics/output/VWO_Login_Dashboard_Test_Plan.pdf is the test plan and you have to use the PRD document 
 Product Requirements Document: VWO Login Dashboard
@@ -409,5 +406,5 @@ This comprehensive PRD serves as the foundation for developing a world-class log
 let me know whether you have understood the task or you need more information
 ----
 
-Advanced Skill exexution:
+# Chapter_00_SKILL_Basics/01_Advanced_Skills/testplan-creator-skill_a
 @Chapter_00_SKILL_Basics/01_Advanced_Skills/testplan-creator-skill_a/SKILL.md KAN-4 create a test plan for this jira in the @Chapter_00_SKILL_Basics/output folder in html and PDF formats

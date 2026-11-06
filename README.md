@@ -191,6 +191,8 @@ JIRA_API_TOKEN=<your-api-token>
    - **Jira-driven** (advanced skill): provide a Jira key such as *"create a test plan for KAN-4"*.
 3. The matching skill generates the deliverable and writes it to `Chapter_00_SKILL_Basics/output/`.
 
+> **`AGENTS.md`** at the repository root instructs the agent to log every completed task as a dated Markdown file in `learnings/` — see that folder for examples.
+
 ## Author
 
 Sathish Kumar A S — The Testing Academy
