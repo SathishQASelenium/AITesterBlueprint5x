@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VWO Test Case Quality Report — GAP-01 Resolved</title>
+<style>
+  :root {
+    --navy: #0b1f3a;
+    --navy-2: #122c52;
+    --blue: #0e7ef3;
+    --blue-soft: #e8f2ff;
+    --green: #128a5a;
+    --green-soft: #e7f7ef;
+    --amber: #b26a00;
+    --amber-soft: #fff4e0;
+    --red: #b42318;
+    --red-soft: #fdecea;
+    --ink: #172033;
+    --muted: #5d6b82;
+    --line: #dfe5ee;
+    --bg: #f3f6fb;
+    --card: #ffffff;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px 56px; }
+  header {
+    background:
+      radial-gradient(900px 300px at 85% -20%, rgba(14, 126, 243, .35), transparent 60%),
+      linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: #fff;
+    padding: 44px 0 40px;
+    margin-bottom: 26px;
+  }
+  header .wrap { padding-bottom: 0; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #9fc7ff;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 31px;
+    line-height: 1.18;
+    letter-spacing: -.02em;
+    font-weight: 700;
+  }
+  .subtitle {
+    margin: 0;
+    color: #c8d8ef;
+    max-width: 820px;
+    font-size: 15px;
+  }
+  .meta-line {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .16);
+    color: #e8f0fb;
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 12px;
+  }
+  .verdict {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--amber);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+  }
+  .verdict .label {
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .verdict h2 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+  }
+  .verdict p { margin: 0; color: var(--muted); max-width: 900px; }
+  .verdict strong { color: var(--ink); }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .metric {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 17px;
+    box-shadow: var(--shadow);
+  }
+  .metric .name {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 6px;
+  }
+  .metric .value {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.03em;
+  }
+  .metric .delta {
+    margin-top: 7px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .delta.down { color: var(--green); }
+  .delta.up { color: var(--blue); }
+  .delta.flat { color: var(--muted); }
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+  }
+  h3 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    letter-spacing: -.01em;
+  }
+  .section-intro {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: #f7f9fc;
+    color: #34435c;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .center { text-align: center; }
+  .good { color: var(--green); font-weight: 700; }
+  .muted { color: var(--muted); }
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge.green { background: var(--green-soft); color: var(--green); }
+  .badge.amber { background: var(--amber-soft); color: var(--amber); }
+  .badge.red { background: var(--red-soft); color: var(--red); }
+  .badge.blue { background: var(--blue-soft); color: var(--blue); }
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .mini-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: #fbfcfe;
+  }
+  .mini-card h4 {
+    margin: 0 0 6px;
+    font-size: 15px;
+  }
+  .mini-card p { margin: 0; color: var(--muted); font-size: 14px; }
+  .chart {
+    display: grid;
+    gap: 16px;
+    margin-top: 6px;
+  }
+  .chart-row .chart-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #34435c;
+  }
+  .bars { display: grid; gap: 5px; }
+  .bar-track {
+    height: 12px;
+    background: #eef2f8;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar {
+    height: 100%;
+    border-radius: 999px;
+  }
+  .bar.before { background: #9db4d1; }
+  .bar.after { background: var(--blue); }
+  .legend {
+    display: flex;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .dot.before { background: #9db4d1; }
+  .dot.after { background: var(--blue); }
+  .testcase {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--green);
+    border-radius: 10px;
+    padding: 18px 20px;
+    background: #fbfefc;
+  }
+  .testcase .id {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+  .testcase h4 { margin: 4px 0 12px; font-size: 17px; }
+  .testcase dl {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 8px 14px;
+    margin: 0;
+    font-size: 14px;
+  }
+  .testcase dt { color: var(--muted); font-weight: 600; }
+  .testcase dd { margin: 0; }
+  .callout {
+    border: 1px solid #cfe0f7;
+    background: linear-gradient(180deg, #f4f9ff 0%, #eef6ff 100%);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .callout h4 { margin: 0 0 6px; font-size: 15px; color: #0b4f9c; }
+  .callout p { margin: 0; color: #29486d; }
+  ul.clean { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+  ul.clean li { margin: 5px 0; }
+  footer {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0 0;
+  }
+  code {
+    background: #f1f4f9;
+    border: 1px solid #e3e9f2;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: .92em;
+  }
+  @media (max-width: 860px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .split { grid-template-columns: 1fr; }
+    .testcase dl { grid-template-columns: 1fr; gap: 3px 0; }
+    .testcase dt { margin-top: 8px; }
+    table { font-size: 13px; }
+    th, td { padding: 9px; }
+  }
+  @media print {
+    body { background: #fff; font-size: 11px; }
+    header { background: #0b1f3a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .wrap { max-width: none; padding: 0 10mm 10mm; }
+    section, .verdict, .metric { box-shadow: none; break-inside: avoid; }
+    .metrics { grid-template-columns: repeat(5, 1fr); }
+    .split { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Test Case Quality Report</div>
+    <h1>Did the GAP-01 clarification produce better test cases?</h1>
+    <p class="subtitle">A before-and-after assessment of the VWO login dashboard test suite, regenerated with RICE-POT under the repository's anti-hallucination rules.</p>
+    <div class="meta-line">
+      <span class="chip">Date: 13 November 2026</span>
+      <span class="chip">Input: PRD + GAP-01 clarification</span>
+      <span class="chip">Method: RICE-POT + anti-hallucination</span>
+      <span class="chip">Version: 2.0</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="verdict">
+    <div class="label">Verdict</div>
+    <h2>Yes — a better test case was produced, but the improvement is marginal.</h2>
+    <p>
+      The clarification closed the environment ambiguity and enabled <strong>one new verified test case</strong>
+      (<code>TC-001A</code>, <code>app.vwo.com</code> resolving to <code>app.wingify.com</code>).
+      It did <strong>not</strong> unblock any of the 21 blocked cases, because those depend on other missing inputs.
+      <strong>29 gaps remain open.</strong>
+    </p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="name">Open gaps</div>
+      <div class="value">29</div>
+      <div class="delta down">▼ 1 from 30</div>
+    </div>
+    <div class="metric">
+      <div class="name">Total cases</div>
+      <div class="value">57</div>
+      <div class="delta up">▲ 1 from 56</div>
+    </div>
+    <div class="metric">
+      <div class="name">Verified</div>
+      <div class="value">24</div>
+      <div class="delta up">▲ 1 from 23</div>
+    </div>
+    <div class="metric">
+      <div class="name">Blocked</div>
+      <div class="value">21</div>
+      <div class="delta flat">— no change</div>
+    </div>
+    <div class="metric">
+      <div class="name">Inference</div>
+      <div class="value">12</div>
+      <div class="delta flat">— no change</div>
+    </div>
+  </div>
+
+  <section>
+    <h3>Before vs. after</h3>
+    <p class="section-intro">The only structural change is GAP-01 moving from open to resolved and the addition of one verified access case.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th class="num">Before</th>
+          <th class="num">After</th>
+          <th class="num">Delta</th>
+          <th>Assessment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Open gaps</td>
+          <td class="num">30</td>
+          <td class="num">29</td>
+          <td class="num good">−1</td>
+          <td>Slight improvement</td>
+        </tr>
+        <tr>
+          <td>Total test cases</td>
+          <td class="num">56</td>
+          <td class="num">57</td>
+          <td class="num good">+1</td>
+          <td>One new case</td>
+        </tr>
+        <tr>
+          <td>Verified cases</td>
+          <td class="num">23</td>
+          <td class="num">24</td>
+          <td class="num good">+1</td>
+          <td>Better traceability</td>
+        </tr>
+        <tr>
+          <td>Inference cases</td>
+          <td class="num">12</td>
+          <td class="num">12</td>
+          <td class="num">0</td>
+          <td class="muted">Unchanged</td>
+        </tr>
+        <tr>
+          <td>Blocked cases</td>
+          <td class="num">21</td>
+          <td class="num">21</td>
+          <td class="num">0</td>
+          <td class="muted">No unblocking</td>
+        </tr>
+        <tr>
+          <td>Environment ambiguity</td>
+          <td><span class="badge red">Open</span></td>
+          <td><span class="badge green">Resolved</span></td>
+          <td class="num good">Closed</td>
+          <td>URL identity confirmed</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>Composition of the suite</h3>
+    <p class="section-intro">The share of verified cases moved from 41.1% to 42.1%. The blocked share is effectively unchanged.</p>
+    <div class="chart">
+      <div class="chart-row">
+        <div class="chart-label"><span>Verified</span><span>23 of 56 → 24 of 57</span></div>
+        <div class="bars">
+          <div class="bar-track"><div class="bar before" style="width:41.1%"></div></div>
+          <div class="bar-track"><div class="bar after" style="width:42.1%"></div></div>
+        </div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-label"><span>Inference (low confidence)</span><span>12 of 56 → 12 of 57</span></div>
+        <div class="bars">
+          <div class="bar-track"><div class="bar before" style="width:21.4%"></div></div>
+          <div class="bar-track"><div class="bar after" style="width:21.1%"></div></div>
+        </div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-label"><span>Blocked</span><span>21 of 56 → 21 of 57</span></div>
+        <div class="bars">
+          <div class="bar-track"><div class="bar before" style="width:37.5%"></div></div>
+          <div class="bar-track"><div class="bar after" style="width:36.8%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="dot before"></span>Before (v1)</span>
+      <span><span class="dot after"></span>After (v2)</span>
+    </div>
+  </section>
+
+  <section>
+    <h3>What changed</h3>
+    <div class="split">
+      <div class="mini-card">
+        <h4>GAP-01 closed</h4>
+        <p><code>app.vwo.com</code> is the previous address and now resolves to <code>app.wingify.com</code>. Both are the same application. This is recorded as verified fact <strong>F-41</strong> and gap status <strong>Resolved</strong>.</p>
+      </div>
+      <div class="mini-card">
+        <h4>One new verified case</h4>
+        <p><code>TC-001A</code> checks the alias resolution end to end. It is the only new case, and it is directly executable without test data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3>New test case enabled by the clarification</h3>
+    <p class="section-intro">This is the concrete “better test case” produced by the new information.</p>
+    <div class="testcase">
+      <div class="id">TC-001A · Access · P1</div>
+      <h4>Legacy <code>app.vwo.com</code> URL resolves to <code>app.wingify.com</code></h4>
+      <dl>
+        <dt>Precondition</dt>
+        <dd>None.</dd>
+        <dt>Test steps</dt>
+        <dd>1) Open <code>app.vwo.com</code> in a browser. 2) Observe the resolved URL and the rendered page.</dd>
+        <dt>Expected result</dt>
+        <dd>The browser resolves to <code>app.wingify.com</code> and displays the same VWO login application.</dd>
+        <dt>Traceability</dt>
+        <dd>User input: GAP-01 clarification, 2026-11-13; PRD: Executive Summary.</dd>
+        <dt>Confidence</dt>
+        <dd><span class="badge green">Verified</span></dd>
+      </dl>
+    </div>
+  </section>
+
+  <section>
+    <h3>Why the improvement is only marginal</h3>
+    <p class="section-intro">GAP-01 was an environment ambiguity, not the blocker for any blocked test case. Closing it improves accuracy but not coverage of the untestable areas.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Observation</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Only one case was added</td>
+          <td>56 → 57 total cases; 23 → 24 verified cases.</td>
+        </tr>
+        <tr>
+          <td>No blocked case was unblocked</td>
+          <td>Blocked remains 21. The blocked cases cite GAP-02, GAP-04, GAP-07, GAP-09, GAP-10, GAP-12, GAP-14, GAP-17, GAP-18, GAP-19, GAP-20, GAP-21, GAP-23, GAP-24, GAP-26, GAP-29, and GAP-30.</td>
+        </tr>
+        <tr>
+          <td>Most missing inputs are still missing</td>
+          <td>29 of 30 gaps remain open, including test accounts, error messages, password policy, session timeout, 2FA/SSO configuration, performance profiles, and backend security evidence.</td>
+        </tr>
+        <tr>
+          <td>The ambiguity itself is gone</td>
+          <td>The suite no longer asks whether <code>app.vwo.com</code> or <code>app.wingify.com</code> is authoritative; the alias behavior is now a verified test.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>Highest-leverage remaining gaps</h3>
+    <p class="section-intro">These are the next inputs most likely to turn blocked or inferred cases into verified, executable cases.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Gap</th>
+          <th>Missing input</th>
+          <th>Cases affected</th>
+          <th class="num">Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge amber">GAP-02</span></td>
+          <td>Valid, invalid, locked, unregistered, 2FA, and SSO test accounts</td>
+          <td>TC-024, TC-027, TC-028, TC-030, TC-031, TC-038</td>
+          <td class="num">6</td>
+        </tr>
+        <tr>
+          <td><span class="badge amber">GAP-23</span></td>
+          <td>Backend/API, storage, audit-log, GDPR/CCPA, and OWASP evidence</td>
+          <td>TC-046, TC-047, TC-049, TC-050</td>
+          <td class="num">4</td>
+        </tr>
+        <tr>
+          <td><span class="badge amber">GAP-21</span></td>
+          <td>Performance measurement method, load profile, and uptime window</td>
+          <td>TC-003, TC-051, TC-052</td>
+          <td class="num">3</td>
+        </tr>
+        <tr>
+          <td><span class="badge amber">GAP-04</span></td>
+          <td>Password policy and strength scoring rules</td>
+          <td>TC-023, TC-040</td>
+          <td class="num">2</td>
+        </tr>
+        <tr>
+          <td><span class="badge amber">GAP-07</span></td>
+          <td>Session timeout value and idle/absolute behavior</td>
+          <td>TC-029</td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td><span class="badge amber">GAP-19</span></td>
+          <td>Accessibility acceptance criteria and WCAG audit method</td>
+          <td>TC-044</td>
+          <td class="num">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>Recommendation</h3>
+    <div class="callout">
+      <h4>Next input to request: test accounts (GAP-02)</h4>
+      <p>It is the single input that would unblock the most cases — up to six, including the positive login path, dashboard transition, Remember Me, 2FA, SSO, and password reset. After that, request the error-message catalog (GAP-05), password policy (GAP-04), session timeout (GAP-07), and backend/security evidence (GAP-23).</p>
+    </div>
+    <ul class="clean">
+      <li><strong>Better test cases now?</strong> Yes — one additional verified case and a confirmed execution target.</li>
+      <li><strong>Materially better suite?</strong> No — 21 of 57 cases remain blocked and 29 gaps remain open.</li>
+      <li><strong>Was the clarification worth capturing?</strong> Yes — it removed a real ambiguity and converted a guess into a deterministic check.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>Method and verification</h3>
+    <p class="section-intro">Counts were verified programmatically against the regenerated markdown deliverable, not estimated.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Test case rows</td><td>57</td></tr>
+        <tr><td>Gap rows</td><td>30 (1 Resolved, 29 Open)</td></tr>
+        <tr><td>Status totals</td><td>24 Verified + 12 Inference + 21 Blocked = 57</td></tr>
+        <tr><td>Blocked phrase compliance</td><td><span class="badge green">PASS</span> — all 21 begin with <code>Insufficient information to determine.</code></td></tr>
+        <tr><td>Inference phrase compliance</td><td><span class="badge green">PASS</span> — all 12 begin with <code>Inference (low confidence)</code></td></tr>
+        <tr><td>Resolved gap not used as a blocker</td><td><span class="badge green">PASS</span> — GAP-01 is not cited by any blocked case</td></tr>
+        <tr><td>Fabricated results</td><td><span class="badge green">None</span> — no execution results or pass/fail claims</td></tr>
+      </tbody>
+    </table>
+    <p class="section-intro" style="margin-top:16px; margin-bottom:0">
+      Sources: <code>Product Requirements Document_ VWO Login Dashboard.pdf</code> and the user-provided GAP-01 clarification dated 13 November 2026.
+      Framework: <code>Template.RICEPPOT.md</code> and <code>anti-hallucination-rules.md</code>.
+      Full register and all 57 cases: <code>VWO_Login_Dashboard_Test_Cases_RICE_POT.md</code>.
+    </p>
+  </section>
+
+  <footer>
+    VWO Login Dashboard · Test Case Quality Report · Version 2.0 · 13 November 2026
+  </footer>
+
+</main>
+</body>
+</html>
