@@ -1,0 +1,106 @@
+{
+  "name": "01_QA_Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -400,
+        32
+      ],
+      "id": "781f3779-c86d-4513-b1b4-6614f35063d8",
+      "name": "When chat message received",
+      "webhookId": "de94fcfb-5ff2-4132-ae00-2dac112dee05"
+    },
+    {
+      "parameters": {
+        "content": "## QA Assistant"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -608,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "dfdda4eb-1220-4ba4-ba57-a96d82636ab5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a QA assistant with 15+ years of experience. You have to answer only QA-related questions. You will not answer anything at all apart from this. You will only answer QA-related questions. If somebody asks you a question related to \"Who is the prime minister of India?\", It is not a question related to QA, so you will not answer and will say, \"I will only answer QA-related questions like smoke testing, sanity, automation, Selenium, Playwright, and more.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -160,
+        -48
+      ],
+      "id": "2ca240fd-648e-4593-8cc1-8336afcfc04b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        160
+      ],
+      "id": "26f419f2-ca88-4aee-99cc-46ffe5c5e2f3",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "WzPsjXjbfEAAAgea",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "83c980e8-6b3f-48da-91d3-434a10fb2344",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "28fe90717e9b4459c29db0c8a8556fb8616efe32ad0a9c28607aafc4434f8266"
+  },
+  "nodeGroups": [],
+  "id": "Z8jaHRR2Lt9Ds6pA",
+  "tags": []
+}
