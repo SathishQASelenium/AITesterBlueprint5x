@@ -84,10 +84,7 @@ Jira issue ID: QA-123
 
 **Example treatment of missing information:**
 ```text
-If the template requests a test environment but the supplied sources do not
-specify one, populate that field with:
-
-Insufficient information to determine.
+If the template requests a test environment but the supplied sources do not specify one, populate that field with: Insufficient information to determine.
 ```
 
 `QA-123` is an illustrative input, not evidence of an existing Jira issue. The example does not replace the supplied design or test plan template.

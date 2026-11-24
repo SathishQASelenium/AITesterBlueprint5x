@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Test Strategy Builder</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>AI Test Strategy Builder</h1>
+    <nav class="tabs">
+      <button class="tab active" data-view="main">Main</button>
+      <button class="tab" data-view="settings">Settings</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="view-main" class="view active">
+      <div class="card">
+        <h2>Test Strategy</h2>
+        <div id="output" class="output">
+          <p class="muted">Enter a Jira ticket ID and click Generate Test Strategy.</p>
+        </div>
+        <div id="status" class="status"></div>
+        <div class="row">
+          <input id="jiraId" type="text" placeholder="Prompt (JIRA Ticket) e.g. VWO-140" />
+          <button id="generateBtn" class="primary">Generate Test Strategy</button>
+        </div>
+        <div class="actions">
+          <button id="copyBtn" class="ghost" disabled>Copy</button>
+          <button id="downloadBtn" class="ghost" disabled>Download .md</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h2>JIRA Connection</h2>
+        <label>URL <input id="jiraBaseUrl" type="text" placeholder="https://team.atlassian.net" /></label>
+        <label>Email <input id="jiraEmail" type="email" placeholder="you@example.com" /></label>
+        <label>Token <input id="jiraApiToken" type="password" placeholder="Leave blank to keep existing" /></label>
+        <button id="testJiraBtn" class="ghost">Test Connection</button>
+        <div id="jiraStatus" class="status"></div>
+      </div>
+
+      <div class="card">
+        <h2>LLM Configuration</h2>
+        <label>Provider
+          <select id="llmProvider">
+            <option value="groq">Groq.com</option>
+            <option value="ollama">Ollama (local)</option>
+          </select>
+        </label>
+        <label>Groq API Key <input id="groqApiKey" type="password" placeholder="Leave blank to keep existing" /></label>
+        <label>Ollama URL <input id="ollamaUrl" type="text" placeholder="http://localhost:11434" /></label>
+        <div class="actions">
+          <button id="saveBtn" class="primary">Save</button>
+          <button id="testLlmBtn" class="ghost">Test LLM</button>
+        </div>
+        <div id="llmStatus" class="status"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{
+  "name": "03_AI-Powered_Jira_Test_Strategy_Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nAm a Test Strategy Agent, provide me a JIRA ID like \"KAN-5\" I will provide you the Test Strategy for that JIRA.",
+        "options": {}
+      },
+      "id": "bb054ba5-c4ee-4a7c-aee9-b097dfb9dbab",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -320,
+        16
+      ],
+      "webhookId": "a91436c2-17ba-43ed-a67c-2fc031e7d6fc"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a senior QA Test Strategy Architect. The user gives a Jira issue key (e.g. KAN-5).\n\nSteps:\n1. Call the Jira tool once with the issue key. If it fails, say so; never invent Jira details.\n2. Analyze the summary, description, priority, status, components, labels and links.\n3. Write a concise, risk-based Test Strategy in Markdown using EXACTLY the template below. Keep section numbers, titles and order. Keep each cell and bullet short. Use \"Not Provided\" for missing info, \"Requires Clarification\" for open questions. Do not invent dates, team sizes, SLAs or requirements. Recommend only test types relevant to the issue.\n4. The document stays DRAFT; never approve or sign off.\n\nTEMPLATE\n# Test Strategy - <ISSUE KEY: SUMMARY>\n> Status: **DRAFT - pending human review.**\n## 1. Strategy Overview\nObjective, Product/Release, Business goals, Success criteria\n## 2. Scope\nIn Scope (journeys, modules, platforms, integrations); Out of Scope\n## 3. Quality Risks & Questions\nTable: # | Area | Risk/Finding | Clarification Needed\n## 4. Test Approach\nTable: Area | Strategy (Functional, Integration, Regression, Exploratory, API, UI, Security, Performance, Accessibility, Compatibility)\n## 5. Test Levels & Coverage\nTable: Level | Owner | Coverage (Unit, Component, Integration, System, UAT)\n## 6. Test Data & Environments\nEnvironments, production-like (Yes/No/Not Provided), data needs, refresh, flags, roles\n## 7. Automation Strategy\nTable: Area | Approach (UI, API, Regression, CI/CD, Smoke); Proposed tools\n## 8. Non-Functional Testing Strategy\nPerformance, Security, Accessibility, Compatibility\n## 9. Resource Allocation\nTable: Role | Count | Responsibilities\n## 10. Timeline & Milestones\nTable: Phase | Planned Dates | Notes\n## 11. Entry & Exit Criteria\n## 12. Assumptions & Dependencies\n## 13. Risks & Mitigations\nTable: Risk | Impact | Mitigation\n## 14. Deliverables\nStrategy, Test Plans, Test Cases, Automation Suite, Defect Reports, Summary Report, Sign-off Report\n---\n## HUMAN REVIEW GATE\nI assumed / I could not confirm / Major quality risks / Open questions blocking sign-off / Approve or edit before test planning begins.\n**Final Status: DRAFT - pending human review.**"
+        }
+      },
+      "id": "2e08de48-9a00-4078-b378-ca95bc9ccc8b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -96,
+        16
+      ],
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 15000
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "maxTokensToSample": 2500
+        }
+      },
+      "id": "597647b9-40a3-45fa-be6f-7757b907ba76",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        256
+      ],
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 15000,
+      "credentials": {
+        "groqApi": {
+          "id": "WzPsjXjbfEAAAgea",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "issueKey": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Key', ``, 'string') }}",
+        "additionalFields": {
+          "fields": "summary,description,issuetype,priority,status,labels,components,project,subtasks,issuelinks,comment,customfield_10019"
+        }
+      },
+      "id": "02587834-f4e9-4bcc-9049-cbce95cc3ca8",
+      "name": "Get an issue in Jira Software",
+      "type": "n8n-nodes-base.jiraTool",
+      "typeVersion": 1,
+      "position": [
+        48,
+        256
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "SwQPslrrinXB5QHy",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## AI-Powered Jira Test Strategy Agent",
+        "height": 464,
+        "width": 1040
+      },
+      "id": "f34dd51d-2e20-4837-a860-020187d5b6ab",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -48
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an issue in Jira Software": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "564a2ac8-2206-4d9f-8dad-66b22983498a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "28fe90717e9b4459c29db0c8a8556fb8616efe32ad0a9c28607aafc4434f8266"
+  },
+  "nodeGroups": [],
+  "id": "EnaR1RPclWub5ntf",
+  "tags": []
+}
